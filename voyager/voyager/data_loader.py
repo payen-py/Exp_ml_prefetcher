@@ -63,15 +63,15 @@ class BenchmarkTrace:
             if line.startswith('***') or line.startswith('Read'):
                 continue
             inst_id, pc, addr = self.process_line(line)
-            if self.train_split is None and inst_id >= 200 * 1000 * 1000:
+            if self.train_split is None and inst_id >= 51 * 1000 * 1000:
                 self.train_split = i
-            elif self.valid_split is None and inst_id >= 225 * 1000 * 1000:
+            elif self.valid_split is None and inst_id >= 101 * 1000 * 1000:
                 self.valid_split = i
-            if inst_id >= 250 * 1000 * 1000:
+            if inst_id >= 101 * 1000 * 1000:
                 break
             # We want 1 epoch per 50M instructions
             # TODO: Do we want to do every 50M instructions or 50M load instructions?
-            if inst_id >= cur_phase * phase_size:
+            if inst_id >= 51 * 1000 * 1000:
                 self.online_cutoffs.append(i)
                 cur_phase += 1
             self.process_row(i, inst_id, pc, addr)
