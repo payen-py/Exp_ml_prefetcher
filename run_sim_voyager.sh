@@ -45,6 +45,10 @@ for app1 in ${app_list[*]}; do
     else
     	app2=${app1%%.txt*}.trace.gz
     fi
+    if [[ ${app1:0:9} == "cactuBSSN" ]]
+    then
+        app2=${app1%%.txt*}.trace.xz
+    fi
     echo ${app2}
 
     ./ml_prefetch_sim.py run $ChampSimTrace_ROOT/$app2 --num-prefetch-warmup-instructions $WARM --num-instructions $SIM --results-dir $Gen_reports_path --prefetch $PrefFile_ROOT/${app1}.model.pth.prefetch_file.csv
