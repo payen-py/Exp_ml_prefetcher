@@ -1,20 +1,15 @@
 #!/bin/bash
 
-#VERSION=1_trans_3_trans_context_f1_64_16
-
 VERSION=voyager
 
 cd ./ChampSim
 
+# build no_pref llc prefetcher
+#./build_champsim.sh hashed_perceptron no no no no lru 1
+
 ROOT="../"
+OUTPUT_ROOT="../LoadTraces"
 ChampSimTrace_ROOT="XXX" # 改成自己的trance文件目录
-OUTPUT_ROOT="../res"
-
-
-OUTPUT_PATH=$OUTPUT_ROOT/$VERSION/sim
-Gen_reports_path=$OUTPUT_ROOT/$VERSION/sim/reports
-PrefFile_ROOT=$OUTPUT_ROOT/$VERSION/train
-Gen_eval_path=$OUTPUT_PATH
 
 app_list=(
 bfs-10.txt.xz          sssp-10.txt.xz          410.bwaves-s0.txt.xz   471.omnetpp-s0.txt.xz
@@ -26,8 +21,7 @@ bc-0.txt.xz            cc-13.txt.xz            pr-10.txt.xz
 450.soplex-s0.txt.xz   429.mcf-s0.txt.xz       605.mcf-s0.txt.xz
 )
 
-mkdir $OUTPUT_PATH
-mkdir $Gen_reports_path
+mkdir $OUTPUT_ROOT
 
 #cd $ChampSim_path
 #python ./$ChampSim_path/ml_prefetch_sim.py build
@@ -36,7 +30,7 @@ mkdir $Gen_reports_path
 WARM=51
 SIM=50
 #./ml_prefetch_sim.py build
-
+seed_file=$(cat ./scripts/seeds.txt)
 #for app1 in `ls $ChampSimTrace_ROOT`; do
 for app1 in ${app_list[*]}; do
 	if [[ ${app1:0:1} -eq 6 ]]
@@ -47,8 +41,16 @@ for app1 in ${app_list[*]}; do
     fi
     echo ${app2}
 
-    ./ml_prefetch_sim.py run $ChampSimTrace_ROOT/$app2 --num-prefetch-warmup-instructions $WARM --num-instructions $SIM --results-dir $Gen_reports_path --prefetch $PrefFile_ROOT/${app1}.model.pth.prefetch_file.csv
-    #--no-base
+    seed_line=$(echo "$seed_file" | grep "${app1%%.txt*}")
+    seed=$(echo "$seed_line" | awk '{print $2}')
+    ./bin/hashed_perceptron-no-no-no-no-lru-1core -prefetch_warmup_instructions ${warm}000000 -simulation_instructions ${sim}000000 -seed $seed -traces $ChampSimTrace_ROOT/$app2
+
+    mv ./no_pref.txt $OUTPUT_ROOT/${app1%%.xz}
+    # compress trace file
+    cd $OUTPUT_ROOT
+    xz -z -k ${app1%%.xz}
+    cd ../ChampSim
+
     echo "Done for "${app1}
 
 done
