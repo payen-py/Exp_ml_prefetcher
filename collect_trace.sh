@@ -27,7 +27,7 @@ mkdir $OUTPUT_ROOT
 #python ./$ChampSim_path/ml_prefetch_sim.py build
 #./ml_prefetch_sim.py build
 
-WARM=51
+WARM=50
 SIM=50
 #./ml_prefetch_sim.py build
 seed_file=$(cat ./scripts/seeds.txt)
