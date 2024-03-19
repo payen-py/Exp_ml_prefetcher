@@ -9,7 +9,7 @@ cd ./ChampSim
 
 ROOT="../"
 OUTPUT_ROOT="../LoadTraces"
-ChampSimTrace_ROOT="XXX" # 改成自己的trance文件目录
+ChampSimTrace_ROOT="XXX" # 改成自己的trace文件目录
 
 app_list=(
 bfs-10.txt.xz          sssp-10.txt.xz          410.bwaves-s0.txt.xz   471.omnetpp-s0.txt.xz

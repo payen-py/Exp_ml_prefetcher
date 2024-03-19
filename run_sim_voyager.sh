@@ -7,7 +7,7 @@ VERSION=voyager
 cd ./ChampSim
 
 ROOT="../"
-ChampSimTrace_ROOT="XXX" # 改成自己的trance文件目录
+ChampSimTrace_ROOT="XXX" # 改成自己的trace文件目录
 OUTPUT_ROOT="../res"
 
 
