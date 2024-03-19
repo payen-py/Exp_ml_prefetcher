@@ -43,7 +43,7 @@ for app1 in ${app_list[*]}; do
 
     seed_line=$(echo "$seed_file" | grep "${app1%%.txt*}")
     seed=$(echo "$seed_line" | awk '{print $2}')
-    ./bin/hashed_perceptron-no-no-no-no-lru-1core -prefetch_warmup_instructions ${warm}000000 -simulation_instructions ${sim}000000 -seed $seed -traces $ChampSimTrace_ROOT/$app2
+    ./bin/hashed_perceptron-no-no-no-no-lru-1core -prefetch_warmup_instructions ${WARM}000000 -simulation_instructions ${SIM}000000 -seed $seed -traces $ChampSimTrace_ROOT/$app2
 
     mv ./no_pref.txt $OUTPUT_ROOT/${app1%%.xz}
     # compress trace file
