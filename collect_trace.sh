@@ -54,5 +54,3 @@ for app1 in ${app_list[*]}; do
     echo "Done for "${app1}
 
 done
-
-./ml_prefetch_sim.py eval --results-dir $Gen_reports_path --output-file $Gen_eval_path/eval.csv
