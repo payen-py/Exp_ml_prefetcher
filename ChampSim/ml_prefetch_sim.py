@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+import threading
 
 from model import Model
 
@@ -215,6 +216,10 @@ def run_command():
     if not os.path.exists(args.results_dir):
         os.makedirs(args.results_dir, exist_ok=True)
 
+    def executed_thread(cmd):
+        os.system(cmd)
+
+    thread_list = []
     if not args.no_base:
         for name, binary in zip(baseline_names, baseline_binaries):
             if not os.path.exists(binary):
@@ -232,9 +237,11 @@ def run_command():
                     trace=execution_trace, results=args.results_dir, base_trace=os.path.basename(execution_trace),
                     base_binary=os.path.basename(binary))
 
+            t = threading.Thread(target=executed_thread, args=(cmd,))
+            thread_list.append(t)
+            t.start()
             print('Running "' + cmd + '"')
 
-            os.system(cmd)
 
     if args.prefetch is not None:
         if not os.path.exists(default_prefetcher_binary):
@@ -252,9 +259,13 @@ def run_command():
                 trace=execution_trace, results=args.results_dir, base_trace=os.path.basename(execution_trace),
                 base_binary=os.path.basename(default_prefetcher_binary))
 
+        t = threading.Thread(target=executed_thread, args=(cmd,))
+        thread_list.append(t)
+        t.start()
         print('Running "' + cmd + '"')
 
-        os.system(cmd)
+    for t in thread_list:
+        t.join()
 
 def read_file(path, cache_level='LLC'):
     expected_keys = ('ipc', 'total_miss', 'useful', 'useless', 'load_miss', 'rfo_miss', 'kilo_inst')
