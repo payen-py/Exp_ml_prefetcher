@@ -71,7 +71,7 @@ class BenchmarkTrace:
                 break
             # We want 1 epoch per 50M instructions
             # TODO: Do we want to do every 50M instructions or 50M load instructions?
-            if inst_id >= 51 * 1000 * 1000:
+            if cur_phase == 1 and inst_id >= 51 * 1000 * 1000:
                 self.online_cutoffs.append(i)
                 cur_phase += 1
             self.process_row(i, inst_id, pc, addr)
@@ -398,7 +398,7 @@ class BenchmarkTrace:
 
             # Include the rest of the data if it wasn't on a 50M boundary
             if self.online_cutoffs[-1] < len(self.data):
-                self.online_cutoffs.append(len(self.data))
+                cutoffs.append(len(self.data))
 
             # Stop before the last dataset since we don't need to train on it
             for i in range(start_phase, len(cutoffs) - 2):
