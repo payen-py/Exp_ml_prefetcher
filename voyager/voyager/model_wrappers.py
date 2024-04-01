@@ -38,6 +38,10 @@ class ModelWrapper:
         self.monitor = None
         self.recreate_chkpt = False
         self.chkpt = None
+        # early stop
+        self.best_val_loss = float('inf')
+        self.patience_counter = 0
+        self.patience = 3
 
         # Create a model
         print('DEBUG : Creating a model with...')
@@ -203,6 +207,16 @@ class ModelWrapper:
                 if valid_ds is not None:
                     val_logs = self.evaluate([valid_ds], training=True)
                     logs.update(val_logs)
+                    val_loss = val_logs['val_loss']
+                    if val_loss < self.best_val_loss:
+                        self.best_val_loss = val_loss
+                        self.patience_counter = 0
+                    else:
+                        self.patience_counter += 1
+                    if self.patience_counter >= self.patience:
+                        print("Early stopping")
+                        self.callbacks.on_train_end(logs)
+                        return
                 self.callbacks.on_epoch_end(self.epoch - 1, logs)
                 epoch_ended = True
                 if self.epoch >= self.config.num_epochs:
