@@ -4,6 +4,10 @@ import shutil
 import subprocess
 import time
 
+import collections.abc
+for type_name in collections.abc.__all__:
+    setattr(collections, type_name, getattr(collections.abc, type_name))
+
 import attrdict
 import yaml
 
